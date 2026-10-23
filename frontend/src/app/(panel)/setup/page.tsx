@@ -26,7 +26,7 @@ interface Phase1 {
 interface Phase2 {
   xrayInstalled: boolean; xrayVersion: string | null; acmeInstalled: boolean;
   vercelInstalled: boolean; netlifyInstalled: boolean; azureInstalled: boolean;
-  railwayInstalled: boolean; fastlyInstalled: boolean; completed: boolean;
+  railwayInstalled: boolean; fastlyInstalled: boolean; ngrokInstalled: boolean; completed: boolean;
 }
 interface Phase3 {
   domain: string | null; certPath: string | null; certExists: boolean;
@@ -294,6 +294,12 @@ export default function SetupPage() {
           onInstall={() => runAction("fastly-i", "/setup/phase2/install-cli", { tool: "fastly" })}
           onUninstall={() => runAction("fastly-u", "/setup/phase2/uninstall", { tool: "fastly" })}
           actionLoading={actionLoading === "fastly-i" || actionLoading === "fastly-u"} t={t}
+        />
+        <ToolRow
+          label={t("setup.ngrokCli")} installed={status.phase2.ngrokInstalled}
+          onInstall={() => runAction("ngrok-i", "/setup/phase2/install-cli", { tool: "ngrok" })}
+          onUninstall={() => runAction("ngrok-u", "/setup/phase2/uninstall", { tool: "ngrok" })}
+          actionLoading={actionLoading === "ngrok-i" || actionLoading === "ngrok-u"} t={t}
         />
       </PhaseCard>
 

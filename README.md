@@ -215,6 +215,7 @@ XHTTP Panel یه **داشبورد وب self-hosted** هست که جایگزین 
   - Azure CLI
   - Railway CLI
   - Fastly CLI
+  - ngrok CLI
 - **دکمه حذف (Uninstall)** — با Dialog تایید
 - هر ابزار نصب‌شده تیک سبز + نسخه، نصب‌نشده ضربدر قرمز + دکمه Install
 

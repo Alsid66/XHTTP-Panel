@@ -57,6 +57,7 @@ router.get("/status", requireAuth, (_req, res) => {
   const xrayVersionRaw = xrayBin ? run(`${xrayBin} version 2>/dev/null | head -1`).output : run("xray version 2>/dev/null | head -1").output;
   const railwayInstalled = cmdExists("railway");
   const fastlyInstalled = cmdExists("fastly");
+  const ngrokInstalled = cmdExists("ngrok") || existsSync("/usr/local/bin/ngrok");
 
   const phase2 = {
     xrayInstalled,
@@ -67,6 +68,7 @@ router.get("/status", requireAuth, (_req, res) => {
     azureInstalled: cmdExists("az"),
     railwayInstalled,
     fastlyInstalled,
+    ngrokInstalled,
     completed: xrayInstalled && (existsSync("/root/.acme.sh/acme.sh") || cmdExists("acme.sh")),
   };
 
@@ -281,6 +283,7 @@ router.post("/phase2/uninstall", requireAuth, (req, res) => {
     azure: "apt-get remove -y azure-cli 2>&1 || npm uninstall -g azure-cli 2>&1",
     railway: "npm uninstall -g @railway/cli 2>&1 && echo 'Railway CLI removed'",
     fastly: "rm -f /usr/local/bin/fastly 2>&1 && echo 'Fastly CLI removed'",
+    ngrok: "rm -f /usr/local/bin/ngrok 2>&1 && echo 'ngrok CLI removed'",
   };
 
   const cmd = cmds[tool];
@@ -305,6 +308,7 @@ router.post("/phase2/install-cli", requireAuth, (req, res) => {
     azure: "curl -sL https://aka.ms/InstallAzureCLIDeb | bash 2>&1",
     railway: "npm install -g @railway/cli 2>&1 && echo 'Railway CLI installed'",
     fastly: "FASTLY_VER=$(curl -s https://api.github.com/repos/fastly/cli/releases/latest | grep -oP 'tag_name.*?v\\K[0-9][^\"]*' | head -1) && curl -fsSL https://github.com/fastly/cli/releases/download/v${FASTLY_VER}/fastly_v${FASTLY_VER}_linux-amd64.tar.gz -o /tmp/fastly.tar.gz && tar -xzf /tmp/fastly.tar.gz -C /usr/local/bin fastly && chmod +x /usr/local/bin/fastly && echo Fastly CLI installed",
+    ngrok: "case $(uname -m) in x86_64) NGROK_ARCH=amd64 ;; aarch64|arm64) NGROK_ARCH=arm64 ;; *) echo unsupported architecture; exit 1 ;; esac && curl -fsSL https://bin.ngrok.com/c/bNyj1mQVY4c/ngrok-v3-stable-linux-${NGROK_ARCH}.tgz -o /tmp/ngrok.tgz && tar -xzf /tmp/ngrok.tgz -C /usr/local/bin ngrok && chmod +x /usr/local/bin/ngrok && rm -f /tmp/ngrok.tgz && ngrok version && echo 'ngrok CLI installed'",
   };
 
   const cmd = cmds[tool];

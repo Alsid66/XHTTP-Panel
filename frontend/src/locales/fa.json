@@ -237,6 +237,7 @@
     "azureCli": "Azure CLI",
     "railwayCli": "Railway CLI",
     "fastlyCli": "Fastly CLI",
+    "ngrokCli": "ngrok CLI",
     "installXray": "نصب Xray",
     "installAcme": "نصب acme.sh",
     "installCli": "نصب",
