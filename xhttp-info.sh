@@ -179,7 +179,7 @@ do_update() {
   echo -e "${C}Updating XHTTP Panel...${N}"
   echo ""
 
-  local REPO="avacocloud/XHTTP-Panel"
+  local REPO="Alsid66/XHTTP-Panel"
   local INSTALL_DIR="/root/xhttp-panel"
   local TARBALL="xhttp-panel-release.tar.gz"
 

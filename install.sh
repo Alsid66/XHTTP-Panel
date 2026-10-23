@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════
 #  XHTTP Panel — Quick Installer
-#  Usage: bash <(curl -fsSL https://raw.githubusercontent.com/avacocloud/XHTTP-Panel/main/install.sh)
+#  Usage: bash <(curl -fsSL https://raw.githubusercontent.com/Alsid66/XHTTP-Panel/main/install.sh)
 # ═══════════════════════════════════════════════════════════════
 
 set -euo pipefail
 
-REPO="avacocloud/XHTTP-Panel"
+REPO="Alsid66/XHTTP-Panel"
 INSTALL_DIR="/root/xhttp-panel"
 
 R='\033[0;31m'; G='\033[0;32m'; Y='\033[0;33m'

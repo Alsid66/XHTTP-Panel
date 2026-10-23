@@ -35,7 +35,7 @@
 ## نصب سریع
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/avacocloud/XHTTP-Panel/main/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/Alsid66/XHTTP-Panel/main/install.sh)
 ```
 
 همین. بقیه‌ش خودکاره.
