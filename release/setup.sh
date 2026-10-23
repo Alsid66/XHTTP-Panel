@@ -82,6 +82,21 @@ else
   ok "nginx installed"
 fi
 
+# ── 3b. acme.sh (needed before Set Certificate) ──────────────
+info "Checking acme.sh..."
+if [[ -x /root/.acme.sh/acme.sh ]]; then
+  ok "acme.sh found"
+else
+  info "Installing socat and acme.sh..."
+  apt-get update -qq
+  apt-get install -y -qq socat curl ca-certificates
+  if curl -fsSL https://get.acme.sh | sh -s email=admin@example.com && [[ -x /root/.acme.sh/acme.sh ]]; then
+    ok "acme.sh installed"
+  else
+    warn "acme.sh install failed — Set Certificate will try again"
+  fi
+fi
+
 # ── 4. Extract panel files ────────────────────────────────────
 info "Extracting panel files to $INSTALL_DIR..."
 # Find the tarball — it could be in current dir, $INSTALL_DIR, or script's dir

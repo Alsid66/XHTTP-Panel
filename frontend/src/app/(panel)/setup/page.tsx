@@ -329,7 +329,7 @@ export default function SetupPage() {
                   await api.post("/setup/phase3/issue-cert", { domain: certDomain });
                   // nginx stops → connection drops. Poll for result after it comes back.
                   toast.info("Setting certificate... please wait ~30s");
-                  const poll = async (retries = 30): Promise<void> => {
+                  const poll = async (retries = 40): Promise<void> => {
                     await new Promise(r => setTimeout(r, 5000));
                     try {
                       const { data } = await api.get("/setup/phase3/cert-status");
@@ -350,7 +350,7 @@ export default function SetupPage() {
                   await poll();
                 } catch {
                   // Expected — nginx dropped. Start polling.
-                  const poll = async (retries = 30): Promise<void> => {
+                  const poll = async (retries = 40): Promise<void> => {
                     await new Promise(r => setTimeout(r, 5000));
                     try {
                       const { data } = await api.get("/setup/phase3/cert-status");

@@ -259,7 +259,7 @@ router.post("/phase2/install-xray", requireAuth, (_req, res) => {
 // ── POST /setup/phase2/install-acme ──
 router.post("/phase2/install-acme", requireAuth, (_req, res) => {
   try {
-    const result = run("curl -fsSL https://get.acme.sh | sh -s email=admin@example.com 2>&1", 60000);
+    const result = run("apt-get install -y -qq socat curl ca-certificates >/dev/null 2>&1; curl -fsSL https://get.acme.sh | sh -s email=admin@example.com 2>&1", 120000);
     // Verify it actually installed
     const installed = existsSync("/root/.acme.sh/acme.sh");
     res.json({ success: installed, output: result.output });
@@ -342,6 +342,16 @@ router.post("/phase3/issue-cert", requireAuth, (req, res) => {
   // IMPORTANT: cleanup() runs in a trap so that even if acme.sh fails, times out,
   // or the script is killed, port 80 is freed and nginx/xray are restarted.
   const script = `
+    if [ ! -x /root/.acme.sh/acme.sh ]; then
+      apt-get update -qq
+      apt-get install -y -qq socat curl ca-certificates
+      curl -fsSL https://get.acme.sh | sh -s email=admin@${safeDomain}
+    fi
+    if [ ! -x /root/.acme.sh/acme.sh ]; then
+      echo "acme.sh is not installed and automatic install failed" >&2
+      exit 1
+    fi
+
     cleanup() {
       fuser -k 80/tcp 2>/dev/null || true
       sleep 1
@@ -361,7 +371,7 @@ router.post("/phase3/issue-cert", requireAuth, (req, res) => {
     exit $?
   `;
 
-  exec(script, { cwd: "/root", timeout: 120000, shell: "/bin/bash" }, (err, stdout, stderr) => {
+  exec(script, { cwd: "/root", timeout: 180000, shell: "/bin/bash" }, (err, stdout, stderr) => {
     // Safety: even if exec timed out and trap didn't fire, force cleanup
     exec("fuser -k 80/tcp 2>/dev/null; sleep 1; systemctl start nginx 2>/dev/null; systemctl start xray 2>/dev/null", { cwd: "/root", shell: "/bin/bash" });
     if (err) {

@@ -16,6 +16,7 @@ C='\033[0;36m'; W='\033[1;37m'; N='\033[0m'
 
 info() { echo -e "${C}➜${N}  $*"; }
 ok()   { echo -e "${G}✔${N}  $*"; }
+warn() { echo -e "${Y}⚠${N}  $*"; }
 die()  { echo -e "${R}✘${N}  $*" >&2; exit 1; }
 
 [[ $EUID -eq 0 ]] || die "Run as root"
@@ -79,7 +80,22 @@ PY
   nginx -t -q 2>/dev/null && systemctl reload nginx 2>/dev/null || true
 fi
 
-# 7. Restart
+# 7. acme.sh (Set Certificate fails without it)
+info "Checking acme.sh..."
+if [[ -x /root/.acme.sh/acme.sh ]]; then
+  ok "acme.sh found"
+else
+  info "Installing socat and acme.sh..."
+  apt-get update -qq
+  apt-get install -y -qq socat curl ca-certificates
+  if curl -fsSL https://get.acme.sh | sh -s email=admin@example.com && [[ -x /root/.acme.sh/acme.sh ]]; then
+    ok "acme.sh installed"
+  else
+    warn "acme.sh install failed — install it from the panel before issuing a certificate"
+  fi
+fi
+
+# 8. Restart
 pm2 restart "$PM2_APP_NAME" --update-env >/dev/null
 ok "Panel restarted"
 
